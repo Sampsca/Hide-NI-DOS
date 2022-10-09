@@ -1,0 +1,12 @@
+[Hide NI DOS Config]
+Copyright © 2010 Sam Schmitz
+
+[Program Options]
+Path to JAR="D:\Program Files\Infinity Engine Modding Tools\NearInfinity\NearInfinity beta 20.jar"
+Desktop Shortcut=1
+Xms=512m     
+Xmx=1024m   
+PermSize=128m     
+MaxPermSize=128m   
+NewSize=128m     
+MaxNewSize=128m   

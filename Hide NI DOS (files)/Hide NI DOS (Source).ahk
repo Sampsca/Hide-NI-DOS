@@ -25,6 +25,7 @@ IniRead, PermSize, %A_ScriptDir%\Hide NI DOS (files)\Hide NI DOS Config.txt, Pro
 IniRead, MaxPermSize, %A_ScriptDir%\Hide NI DOS (files)\Hide NI DOS Config.txt, Program Options, MaxPermSize, %A_Space%
 IniRead, NewSize, %A_ScriptDir%\Hide NI DOS (files)\Hide NI DOS Config.txt, Program Options, NewSize, %A_Space%
 IniRead, MaxNewSize, %A_ScriptDir%\Hide NI DOS (files)\Hide NI DOS Config.txt, Program Options, MaxNewSize, %A_Space%
+IniRead, DesktopShortcut, %A_ScriptDir%\Hide NI DOS (files)\Hide NI DOS Config.txt, Program Options, Desktop Shortcut, %A_Space%
 
 
 IfEqual 1, -config ;Param 1 is "-config"
@@ -100,10 +101,11 @@ Config:
 	Gui, 2:Add, Checkbox, x46 y410 w320 h30 cWhite vCheckbox6 gCheckbox6, Specify max size of new generation memory.
 	Gui, 2:Add, Edit, x76 y440 w90 h20 cRed vEdit6 readonly, %MaxNewSize%
 	Gui, 2:Add, UpDown, x76 y440 w10 h20 0x80 vUpDown6 Range1-10000, 128 ;%MaxNewSize%
-	Gui, 2:Add, Button, x96 y480 w100 h30 gRestoreDefaults, Restore Defaults
-	Gui, 2:Add, Button, x216 y479 w100 h30 g2ButtonOK, OK
+	Gui, 2:Add, Checkbox, x46 y470 w320 h30 cWhite vCheckbox7, Add shortcut to current user's desktop.
+	Gui, 2:Add, Button, x96 y510 w100 h30 gRestoreDefaults, Restore Defaults
+	Gui, 2:Add, Button, x216 y510 w100 h30 g2ButtonOK, OK
 	Gui, 2:Color, 000000
-	Gui, 2:Show, w415 h520, Config
+	Gui, 2:Show, w415 h550, Config
 	IfEqual, Xms
 		{
 		GuiControl,2:, Checkbox1, 0
@@ -176,6 +178,14 @@ Config:
 		GuiControl,, Edit6, %MaxNewSize%
 		}
 	GoSub, Checkbox6
+	IfEqual, DesktopShortcut, 0
+		{
+		GuiControl,2:, Checkbox7, 0
+		}
+	IfEqual, DesktopShortcut, 1
+		{
+		GuiControl,2:, Checkbox7, 1
+		}
 	Return
 	}
 Return
@@ -342,6 +352,16 @@ Return
 		{
 		IniWrite, %A_Space%, %A_ScriptDir%\Hide NI DOS (files)\Hide NI DOS Config.txt, Program Options, MaxNewSize
 		}
+	IfEqual, Checkbox7, 1
+		{
+		IniWrite, 1, %A_ScriptDir%\Hide NI DOS (files)\Hide NI DOS Config.txt, Program Options, Desktop Shortcut
+		FileCreateShortcut, %A_ScriptFullPath%, %A_Desktop%\NearInfinity.lnk, %A_ScriptDir%, , Quietly runs NearInfinity with the specified VM Options.
+		}
+	IfEqual, Checkbox7, 0
+		{
+		IniWrite, 0, %A_ScriptDir%\Hide NI DOS (files)\Hide NI DOS Config.txt, Program Options, Desktop Shortcut
+		}
+	
 	Gui, 2:Destroy
 	}
 Return
@@ -378,6 +398,7 @@ RestoreDefaults:
 		GuiControl, Enable, UpDown6
 		GuiControl,, Edit6, 128
 		GuiControl,, UpDown6, 128
+	GuiControl,2:, Checkbox7, 1
 	Gui, 2:Submit, NoHide
 	}
 Return
@@ -395,7 +416,7 @@ About:
 	Gui, 3:-SysMenu +AlwaysOnTop
 	Gui, 3:Add, Picture, x36 y0 w50 h50 , %A_ScriptDir%\Hide NI DOS (files)\PSicon48x48.ico
 	Gui, 3:Font, S15 w700, Verdana
-	Gui, 3:Add, Text, x122 y20 w230 h30 +Center cWhite, Hide NI DOS  v1.00
+	Gui, 3:Add, Text, x122 y20 w230 h30 +Center cWhite, Hide NI DOS  v1.01
 	Gui, 3:Font, S10 w700, Verdana
 	Gui, 3:Add, Text, x7 y50 w460 h40 +Center cWhite, Quietly runs NearInfinity with the specified VM Options.
 	Gui, 3:Add, Text, x97 y90 w280 h20 +Center cWhite, Copyright © 2010 Sam Schmitz
