@@ -313,7 +313,7 @@
         <p class="about">
           <a href="http://www.shsforums.net/topic/45358-nearinfinity/">Mod Website</a> &#8226;
           <a href="http://www.shsforums.net/topic/45358-nearinfinity/">Mod Forum</a> &#8226;
-          Version: 1.01
+          Version: 1.02
         </p>
         <hr />
         <p class="menu">
@@ -339,9 +339,10 @@
 		<li>Specify max size of permanent generation memory.</li>
 		<li>Specify initial size of new generation memory.</li>
 		<li>Specify max size of new generation memory.</li>
+		<li>Specify additional custom parameters.</li>
 		</ul>
 	  <br />
-	  <p>This is a beta release, and as such, may be buggy.  I am, however, prepared to make every effort to correct any errors or problems that you encounter with this program.  If there are other command-line arguments you would like this utility to support (like a non-standard garbage collector or something), please let me know and I’ll add them.  This utility was built using the AutoHotkey scripting language, and as such will perform best on newer Windows operating systems.  It has been optimized for Windows XP.  Enjoy :-) !</p>
+	  <p>This is a beta release, and as such, may be buggy.  I am, however, prepared to make every effort to correct any errors or problems that you encounter with this program.  If there are other command-line arguments you would like this utility to support (like a non-standard garbage collector or something), please let me know and I’ll add them.  As of version 1.02, custom command-line arguments can be added by manually editing the “Custom” key in “Hide NI DOS Config.txt”.  The contents of the key should be exactly how the argument would be used in a batch file e.g. “-Xms512m” (without the quotes).  This utility was built using the AutoHotkey scripting language, and as such will perform best on newer Windows operating systems.  It has been optimized for Windows XP.  Enjoy :-) !</p>
           <address>
             <span class="footer">Hide NI DOS &gt; Introduction</span> &#8226;<a href="#top">BACK TO TOP</a>
           </address>
@@ -373,7 +374,8 @@
           <h2>Credits</h2>
           <p>Thanks to all the people who contributed to the NearInfinity project over the years.  Your contributions are very much appreciated by the Infinity Engine Modding Community.
 	  <br /><br />
-	     Thanks to ScuD for <a href=" http://forums.pocketplane.net/index.php/topic,26831.msg322159.html#msg322159 ">telling me</a> which command-line arguments he uses when running NearInfinity.  I now use the very same ones every time I run NI, and they are the default values used by Hide NI DOS.<br /><br />To view the "About" dialog, run Hide NI DOS.exe with the "-about" parameter.  In other words, save "Hide NI DOS.exe" -about to a .BAT file and run it.</p>
+	     Thanks to ScuD for <a href=" http://forums.pocketplane.net/index.php/topic,26831.msg322159.html#msg322159 ">telling me</a> which command-line arguments he uses when running NearInfinity.  I now use the very same ones every time I run NI, and they are the default values used by Hide NI DOS.<br /><br />Thanks to corrupt for his <a href="http://www.autohotkey.com/forum/viewtopic.php?t=8606">CMDret-AHK functions</a>.<br /><br />To view the "About" dialog, run Hide NI DOS.exe with the "-about" parameter.  In other words, save "Hide NI DOS.exe" -about to a .BAT file and run it.
+	  </p>
           <hr class="floatfix" /><!-- Don't remove the <hr /> unless you have text following the last "t2" in this <div>! -->
           <address>
             <span class="footer">Hide NI DOS &gt; Credits</span> &#8226;<a href="#top">BACK TO TOP</a>
@@ -392,6 +394,16 @@
           <ul>
             <li>Added option to config to create a shortcut on the current user’s desktop.</li>
           </ul>
+
+          <h6>15 September 2011 - Version 1.02:</h6>
+          <ul>
+            <li>Replaced writing, running, and hiding .BAT files with corrupt’s CMDret function.</li>
+            <li>Fixed input parameters so that “-about” and “-config” can be used at the same time.</li>
+            <li>Added option to enable logging of console output (disabled by default).</li>
+            <li>Added support for specifying additional custom parameters.  See <a href="#intro">Introduction</a>.</li>
+
+          </ul>
+
 	  <address>
             <span class="footer">Hide NI DOS &gt; Version History</span> &#8226;<a href="#top">BACK TO TOP</a>
           </address>
