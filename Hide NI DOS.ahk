@@ -13,7 +13,7 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 
 OnError("Traceback")
 
-Global PS_Version:="v2.0.0.0"
+Global PS_Version:="v2.0.1.0"
 Global PS_Temp:=RegExReplace(A_Temp,"\\$") "\Hide NI DOS"
 Global PS_Dir:=RegExReplace(A_ScriptDir,"\\$") "\Hide NI DOS (files)"
 
@@ -200,7 +200,7 @@ RestoreNIDefaults(){
 }
 
 CreateShortcut(){
-	If (DesktopShortcut & FileExist(NIPath) & !FileExist(A_Desktop "\NearInfinity.lnk")) ; Link doesn't already exist
+	If (DesktopShortcut & (FileExist(NIPath)!="") & !FileExist(A_Desktop "\NearInfinity.lnk")) ; Link doesn't already exist
 		FileCreateShortcut, %A_ScriptFullPath%, %A_Desktop%\NearInfinity.lnk, %A_ScriptDir%, , Quietly runs NearInfinity with the specified VM Options., % (A_IsCompiled?A_ScriptFullPath:PS_Dir "\PSicon48x48.ico")
 }
 
