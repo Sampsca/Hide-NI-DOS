@@ -313,7 +313,7 @@
         <p class="about">
           <a href="http://www.shsforums.net/topic/45358-nearinfinity/">Mod Website</a> &#8226;
           <a href="http://www.shsforums.net/topic/45358-nearinfinity/">Mod Forum</a> &#8226;
-          Version: 1.02
+          Version: 1.03
         </p>
         <hr />
         <p class="menu">
@@ -342,7 +342,7 @@
 		<li>Specify additional custom parameters.</li>
 		</ul>
 	  <br />
-	  <p>This is a beta release, and as such, may be buggy.  I am, however, prepared to make every effort to correct any errors or problems that you encounter with this program.  If there are other command-line arguments you would like this utility to support (like a non-standard garbage collector or something), please let me know and I’ll add them.  As of version 1.02, custom command-line arguments can be added by manually editing the “Custom” key in “Hide NI DOS Config.txt”.  The contents of the key should be exactly how the argument would be used in a batch file e.g. “-Xms512m” (without the quotes).  This utility was built using the AutoHotkey scripting language, and as such will perform best on newer Windows operating systems.  It has been optimized for Windows XP.  Enjoy :-) !</p>
+	  <p>This is a beta release, and as such, may be buggy.  I am, however, prepared to make every effort to correct any errors or problems that you encounter with this program.  If there are other command-line arguments you would like this utility to support (like a non-standard garbage collector or something), please let me know and I’ll add them.  As of version 1.02, custom command-line arguments can be added by manually editing the "Custom" key in "Hide NI DOS Config.txt".  The contents of the key should be exactly how the argument would be used in a batch file e.g. "-Xms512m" (without the quotes).  This utility was built using the AutoHotkey scripting language, and as such will perform best on newer Windows operating systems.  It has been optimized for Windows XP.  Enjoy :-) !</p>
           <address>
             <span class="footer">Hide NI DOS &gt; Introduction</span> &#8226;<a href="#top">BACK TO TOP</a>
           </address>
@@ -362,7 +362,7 @@
         <a name="faq" id="faq"></a>
         <div class="content">
           <h2>Frequently Asked Questions</h2>
-          <p><strong>Q: What is needed this program?</strong><br />A: Basically, the default memory allocation settings (which are platform-dependent) are just not high enough.  NearInfinity can run out of memory if used for long periods of time, causing it to freeze or give OutOfMemory errors.  The best way to counteract this is to allocate more memory for NI to use at runtime.   Hide NI DOS is better than commonly distributed .BAT files because it makes it easy to adjust more than just the maximum size of the memory allocation pool.  More importantly, it hides the command prompt window through which NI is run.</p>
+          <p><strong>Q: Why is this program needed?</strong><br />A: Basically, the default memory allocation settings (which are platform-dependent) are just not high enough.  NearInfinity can run out of memory if used for long periods of time, causing it to freeze or give OutOfMemory errors.  The best way to counteract this is to allocate more memory for NI to use at runtime.   Hide NI DOS is better than commonly distributed .BAT files because it makes it easy to adjust more than just the maximum size of the memory allocation pool.  More importantly, it hides the command prompt window through which NI is run.</p>
           <address>
             <span class="footer">Hide NI DOS &gt; FAQ</span> &#8226;<a href="#top">BACK TO TOP</a>
           </address>
@@ -394,16 +394,20 @@
           <ul>
             <li>Added option to config to create a shortcut on the current user’s desktop.</li>
           </ul>
-
           <h6>15 September 2011 - Version 1.02:</h6>
           <ul>
             <li>Replaced writing, running, and hiding .BAT files with corrupt’s CMDret function.</li>
-            <li>Fixed input parameters so that “-about” and “-config” can be used at the same time.</li>
+            <li>Fixed input parameters so that "-about" and "-config" can be used at the same time.</li>
             <li>Added option to enable logging of console output (disabled by default).</li>
             <li>Added support for specifying additional custom parameters.  See <a href="#intro">Introduction</a>.</li>
-
           </ul>
-
+          <h6>12 January 2012 - Version 1.03:</h6>
+          <ul>
+            <li>Fixed a bug where the Hide NI DOS process did not close when the NearInfinity window was closed.</li>
+            <li>Replaced corrupt’s "CMDret_Stream" function with his "CMDret_RunReturn" function, as it is more appropriate and likely performs better in this situation.</li>
+            <li>Greatly improved logging.  The output should actually be readable now :-) .  It is still disabled by default.</li>
+            <li>Many other minor code improvements.</li>
+          </ul>
 	  <address>
             <span class="footer">Hide NI DOS &gt; Version History</span> &#8226;<a href="#top">BACK TO TOP</a>
           </address>

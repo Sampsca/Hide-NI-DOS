@@ -27,29 +27,26 @@ IniRead, DesktopShortcut, %A_ScriptDir%\Hide NI DOS (files)\Hide NI DOS Config.t
 IniRead, Logging, %A_ScriptDir%\Hide NI DOS (files)\Hide NI DOS Config.txt, Program Options, Logging, %A_Space%
 IniRead, Custom, %A_ScriptDir%\Hide NI DOS (files)\Hide NI DOS Config.txt, Program Options, Custom, %A_Space%
 
+If (DesktopShortcut = "1") AND (FileExist(A_Desktop "\NearInfinity.lnk") = "")
+	FileCreateShortcut, %A_ScriptFullPath%, %A_Desktop%\NearInfinity.lnk, %A_ScriptDir%, , Quietly runs NearInfinity with the specified VM Options.
 
-IfEqual 1, -config ;Param 1 is "-config"
+Loop, %0%
 	{
-	Gosub, Config
-	WinWaitClose, Config ahk_class AutoHotkeyGUI
+	If (%A_Index% = "-config")	;Current Param is "-config"
+		{
+		Gosub, Config
+		WinWaitClose, Config ahk_class AutoHotkeyGUI
+		}
+	Else If (%A_Index% = "-about")	;Current Param is "-about"
+		{
+		Gosub, About
+		WinWaitClose, About ahk_class AutoHotkeyGUI
+		}
 	}
-Else IfEqual 1, -about ;Param 1 is "-about"
-	{
-	Gosub, About
-	WinWaitClose, About ahk_class AutoHotkeyGUI
-	}
-IfEqual 2, -config ;Param 1 is "-config"
-	{
-	Gosub, Config
-	WinWaitClose, Config ahk_class AutoHotkeyGUI
-	}
-Else IfEqual 2, -about ;Param 1 is "-about"
-	{
-	Gosub, About
-	WinWaitClose, About ahk_class AutoHotkeyGUI
-	}
-IfNotEqual, 1
+IfNotEqual, 0, 0
 	GoSub, FileExit
+
+
 
 ;FileAppend, java -Xms512m -Xmx1024m -XX:PermSize=128m -XX:MaxPermSize=128m -XX:NewSize=128m -XX:MaxNewSize=128m -jar "NearInfinity beta 20.jar", %BAT%
 text=java
@@ -69,23 +66,20 @@ IfNotEqual, Custom
 	text=%text%%A_Space%%Custom%
 text=%text%%A_Space%-jar "%Path%"
 
-CMDin := "cmd /c " . text
-CMDret_Stream(CMDin)
-FormatTime, Time
-IfEqual, Logging, 1
-	{
-	IfNotEqual, retStr
-		FileAppend, //////////////////////////////////////////////////`n%Time%`n%text%`n%retStr%`n`n`n, %F2%
-	}
 
-Return
+CMDout := CMDret_RunReturn( "cmd /c " text)
+FormatTime, Time
+
+If (Logging = "1")
+	FileAppend, //////////////////////////////////////////////////`r`n%Time%`r`n%text%`r`n%CMDout%`r`n`r`n`r`n, %F2%
+
+
+;~ Return
 
 FileExit:
 OnExit:
 Exit:
-	{
 	ExitApp
-	}
 Return
 	
 
@@ -122,7 +116,7 @@ Config:
 	Gui, 2:Add, Checkbox, x46 y470 w320 h30 cWhite vCheckbox7, Add shortcut to current user's desktop.
 	Gui, 2:Add, Checkbox, x46 y500 w320 h30 cWhite vCheckbox8, Enable logging.
 	Gui, 2:Add, Button, x96 y540 w100 h30 gRestoreDefaults, Restore Defaults
-	Gui, 2:Add, Button, x216 y540 w100 h30 g2ButtonOK, OK
+	Gui, 2:Add, Button, x216 y540 w100 h30 +Default g2ButtonOK, OK
 	Gui, 2:Color, 000000
 	Gui, 2:Show, w415 h580, Config
 	IfEqual, Xms
@@ -130,7 +124,7 @@ Config:
 		GuiControl,2:, Checkbox1, 0
 		GuiControl,, Edit1, 512
 		}
-	IfNotEqual, Xms
+	Else
 		{
 		GuiControl,2:, Checkbox1, 1
 		StringReplace, Xms, Xms, m
@@ -142,7 +136,7 @@ Config:
 		GuiControl,2:, Checkbox2, 0
 		GuiControl,, Edit2, 1024
 		}
-	IfNotEqual, Xmx
+	Else
 		{
 		GuiControl,2:, Checkbox2, 1
 		StringReplace, Xmx, Xmx, m
@@ -154,7 +148,7 @@ Config:
 		GuiControl,2:, Checkbox3, 0
 		GuiControl,, Edit3, 128
 		}
-	IfNotEqual, PermSize
+	Else
 		{
 		GuiControl,2:, Checkbox3, 1
 		StringReplace, PermSize, PermSize, m
@@ -166,7 +160,7 @@ Config:
 		GuiControl,2:, Checkbox4, 0
 		GuiControl,, Edit4, 128
 		}
-	IfNotEqual, MaxPermSize
+	Else
 		{
 		GuiControl,2:, Checkbox4, 1
 		StringReplace, MaxPermSize, MaxPermSize, m
@@ -178,7 +172,7 @@ Config:
 		GuiControl,2:, Checkbox5, 0
 		GuiControl,, Edit5, 128
 		}
-	IfNotEqual, NewSize
+	Else
 		{
 		GuiControl,2:, Checkbox5, 1
 		StringReplace, NewSize, NewSize, m
@@ -190,7 +184,7 @@ Config:
 		GuiControl,2:, Checkbox6, 0
 		GuiControl,, Edit6, 128
 		}
-	IfNotEqual, MaxNewSize
+	Else
 		{
 		GuiControl,2:, Checkbox6, 1
 		StringReplace, MaxNewSize, MaxNewSize, m
@@ -198,21 +192,13 @@ Config:
 		}
 	GoSub, Checkbox6
 	IfEqual, DesktopShortcut, 0
-		{
 		GuiControl,2:, Checkbox7, 0
-		}
-	IfEqual, DesktopShortcut, 1
-		{
+	Else IfEqual, DesktopShortcut, 1
 		GuiControl,2:, Checkbox7, 1
-		}
 	IfEqual, Logging, 0
-		{
 		GuiControl,2:, Checkbox8, 0
-		}
-	IfEqual, Logging, 1
-		{
+	Else IfEqual, Logging, 1
 		GuiControl,2:, Checkbox8, 1
-		}
 	Return
 	}
 Return
@@ -220,14 +206,10 @@ Return
 ____:
 	{
 	FileSelectFile, Path, 3, %A_ScriptDir%, Select NearInfinity's .JAR file., Java ARchive (*.jar)
-		if Path =
-			{
+		If (Path = "")
 			Return
-			}
 		Else
-			{
 			GuiControl,2:Text, Edit0, %Path%
-			}
 	}
 Return
 
@@ -239,7 +221,7 @@ Checkbox1:
 		GuiControl, Enable, Edit1
 		GuiControl, Enable, UpDown1
 		}
-	IfEqual, Checkbox1, 0
+	Else
 		{
 		GuiControl, Disable, Edit1
 		GuiControl, Disable, UpDown1
@@ -255,7 +237,7 @@ Checkbox2:
 		GuiControl, Enable, Edit2
 		GuiControl, Enable, UpDown2
 		}
-	IfEqual, Checkbox2, 0
+	Else
 		{
 		GuiControl, Disable, Edit2
 		GuiControl, Disable, UpDown2
@@ -271,7 +253,7 @@ Checkbox3:
 		GuiControl, Enable, Edit3
 		GuiControl, Enable, UpDown3
 		}
-	IfEqual, Checkbox3, 0
+	Else
 		{
 		GuiControl, Disable, Edit3
 		GuiControl, Disable, UpDown3
@@ -287,7 +269,7 @@ Checkbox4:
 		GuiControl, Enable, Edit4
 		GuiControl, Enable, UpDown4
 		}
-	IfEqual, Checkbox4, 0
+	Else
 		{
 		GuiControl, Disable, Edit4
 		GuiControl, Disable, UpDown4
@@ -303,7 +285,7 @@ Checkbox5:
 		GuiControl, Enable, Edit5
 		GuiControl, Enable, UpDown5
 		}
-	IfEqual, Checkbox5, 0
+	Else
 		{
 		GuiControl, Disable, Edit5
 		GuiControl, Disable, UpDown5
@@ -319,7 +301,7 @@ Checkbox6:
 		GuiControl, Enable, Edit6
 		GuiControl, Enable, UpDown6
 		}
-	IfEqual, Checkbox6, 0
+	Else
 		{
 		GuiControl, Disable, Edit6
 		GuiControl, Disable, UpDown6
@@ -330,73 +312,42 @@ Return
 2ButtonOK:
 	{
 	Gui, 2:Submit, NoHide
-	IniWrite, "%Path%", %A_ScriptDir%\Hide NI DOS (files)\Hide NI DOS Config.txt, Program Options, Path to JAR
+	IniWrite, %Path%, %A_ScriptDir%\Hide NI DOS (files)\Hide NI DOS Config.txt, Program Options, Path to JAR
 	IfEqual, Checkbox1, 1
-		{
 		IniWrite, %UpDown1%m, %A_ScriptDir%\Hide NI DOS (files)\Hide NI DOS Config.txt, Program Options, Xms
-		}
-	IfEqual, Checkbox1, 0
-		{
+	Else
 		IniWrite, %A_Space%, %A_ScriptDir%\Hide NI DOS (files)\Hide NI DOS Config.txt, Program Options, Xms
-		}
 	IfEqual, Checkbox2, 1
-		{
 		IniWrite, %UpDown2%m, %A_ScriptDir%\Hide NI DOS (files)\Hide NI DOS Config.txt, Program Options, Xmx
-		}
-	IfEqual, Checkbox2, 0
-		{
+	Else
 		IniWrite, %A_Space%, %A_ScriptDir%\Hide NI DOS (files)\Hide NI DOS Config.txt, Program Options, Xmx
-		}
 	IfEqual, Checkbox3, 1
-		{
 		IniWrite, %UpDown3%m, %A_ScriptDir%\Hide NI DOS (files)\Hide NI DOS Config.txt, Program Options, PermSize
-		}
-	IfEqual, Checkbox3, 0
-		{
+	Else
 		IniWrite, %A_Space%, %A_ScriptDir%\Hide NI DOS (files)\Hide NI DOS Config.txt, Program Options, PermSize
-		}
 	IfEqual, Checkbox4, 1
-		{
 		IniWrite, %UpDown4%m, %A_ScriptDir%\Hide NI DOS (files)\Hide NI DOS Config.txt, Program Options, MaxPermSize
-		}
-	IfEqual, Checkbox4, 0
-		{
+	Else
 		IniWrite, %A_Space%, %A_ScriptDir%\Hide NI DOS (files)\Hide NI DOS Config.txt, Program Options, MaxPermSize
-		}
 	IfEqual, Checkbox5, 1
-		{
 		IniWrite, %UpDown5%m, %A_ScriptDir%\Hide NI DOS (files)\Hide NI DOS Config.txt, Program Options, NewSize
-		}
-	IfEqual, Checkbox5, 0
-		{
+	Else
 		IniWrite, %A_Space%, %A_ScriptDir%\Hide NI DOS (files)\Hide NI DOS Config.txt, Program Options, NewSize
-		}
 	IfEqual, Checkbox6, 1
-		{
 		IniWrite, %UpDown6%m, %A_ScriptDir%\Hide NI DOS (files)\Hide NI DOS Config.txt, Program Options, MaxNewSize
-		}
-	IfEqual, Checkbox6, 0
-		{
+	Else
 		IniWrite, %A_Space%, %A_ScriptDir%\Hide NI DOS (files)\Hide NI DOS Config.txt, Program Options, MaxNewSize
-		}
 	IfEqual, Checkbox7, 1
 		{
 		IniWrite, 1, %A_ScriptDir%\Hide NI DOS (files)\Hide NI DOS Config.txt, Program Options, Desktop Shortcut
 		FileCreateShortcut, %A_ScriptFullPath%, %A_Desktop%\NearInfinity.lnk, %A_ScriptDir%, , Quietly runs NearInfinity with the specified VM Options.
 		}
-	IfEqual, Checkbox7, 0
-		{
+	Else
 		IniWrite, 0, %A_ScriptDir%\Hide NI DOS (files)\Hide NI DOS Config.txt, Program Options, Desktop Shortcut
-		}
 	IfEqual, Checkbox8, 1
-		{
 		IniWrite, 1, %A_ScriptDir%\Hide NI DOS (files)\Hide NI DOS Config.txt, Program Options, Logging
-		}
-	IfEqual, Checkbox8, 0
-		{
+	Else
 		IniWrite, 0, %A_ScriptDir%\Hide NI DOS (files)\Hide NI DOS Config.txt, Program Options, Logging
-		}
-	
 	Gui, 2:Destroy
 	}
 Return
@@ -441,9 +392,7 @@ Return
 
 
 2GuiClose:
-	{
 	Gui, 2:Destroy
-	}
 Return
 
 
@@ -452,81 +401,67 @@ About:
 	Gui, 3:-SysMenu +AlwaysOnTop
 	Gui, 3:Add, Picture, x36 y0 w50 h50 , %A_ScriptDir%\Hide NI DOS (files)\PSicon48x48.ico
 	Gui, 3:Font, S15 w700, Verdana
-	Gui, 3:Add, Text, x122 y20 w230 h30 +Center cWhite, Hide NI DOS  v1.02
+	Gui, 3:Add, Text, x122 y20 w230 h30 +Center cWhite, Hide NI DOS  v1.03
 	Gui, 3:Font, S10 w700, Verdana
 	Gui, 3:Add, Text, x7 y50 w460 h40 +Center cWhite, Quietly runs NearInfinity with the specified VM Options.
-	Gui, 3:Add, Text, x97 y90 w280 h20 +Center cWhite, Copyright © 2010 Sam Schmitz
+	Gui, 3:Add, Text, x97 y90 w280 h20 +Center cWhite, Copyright © 2010-2012 Sam Schmitz
 	Gui, 3:Font, S8, Verdana
-	Gui, 3:Add, Edit, x10 y120 w460 h300 +Center cWhite -TabStop ReadOnly, This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.`n`nThis program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.`n`nYou should have received a copy of the GNU General Public License along with this program (%A_ScriptDir%\Hide NI DOS (files)\COPYING.html).  If not, see <http://www.gnu.org/licenses/>.`n`nYou may contact Sam Schmitz at <sampsca@yahoo.com> or by sending a PM to Sam. at <http://www.shsforums.net/index.php?showuser=10485>.
-	Gui, 3:Add, Button, x188 y430 w100 h30 g3ButtonOK, OK
+	Gui, 3:Add, Edit, x10 y120 w460 h300 +Center cWhite -TabStop ReadOnly, This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.`n`nThis program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.`n`nYou should have received a copy of the GNU General Public License along with this program (%A_ScriptDir%\Hide NI DOS (files)\COPYING.html).  If not, see <http://www.gnu.org/licenses/>.`n`nYou may contact Sam Schmitz at <sampsca@yahoo.com> or by sending a PM to Sam. at <http://www.shsforums.net/index.php?showuser=10485>.`n`nThanks to ScuD for telling me which command-line arguments he uses when running NearInfinity. I now use the very same ones every time I run NI, and they are the default values used by Hide NI DOS.`n`nThanks to corrupt for his CMDret-AHK functions.
+	Gui, 3:Add, Button, x188 y430 w100 h30 +Default g3ButtonOK, OK
 	Gui, 3:Color, 000000
 	Gui, 3:Show, w480 h470, About
 	}
 Return
 
+
+3GuiClose:
 3ButtonOK:
-    {
-	3GuiClose:
-		{
-		Gui, 3:Destroy
-		}
-	Return
-    }
+	Gui, 3:Destroy
 Return
+
 
 LoadPath:
 	{
 	FileSelectFile, Path, 3, %A_ScriptDir%, Select NearInfinity's .JAR file., Java ARchive (*.jar)
-		if Path =
-			{
+		If (Path = "")
 			Return
-			}
 		Else
-			{
-			IniWrite, "%Path%", %A_ScriptDir%\Hide NI DOS (files)\Hide NI DOS Config.txt, Program Options, Path to JAR
-			}
+			IniWrite, %Path%, %A_ScriptDir%\Hide NI DOS (files)\Hide NI DOS Config.txt, Program Options, Path to JAR
 	}
 Return
 
 
 ; ******************************************************************
-; CMDret-AHK functions by corrupt
+; CMDret-AHK functions
+; version 1.10 beta
 ;
-; CMDret_Stream
-; version 0.03 beta
-; Updated: Feb 19, 2007
-;
-; CMDret code modifications and/or contributions have been made by:
-; Laszlo, shimanov, toralf, Wdb
+; Updated: Dec 5, 2006
+; by: corrupt
+; Code modifications and/or contributions made by:
+; Laszlo, shimanov, toralf, Wdb 
 ; ******************************************************************
 ; Usage:
 ; CMDin - command to execute
-; CMDname - type of output to process (Optional)
 ; WorkingDir - full path to working directory (Optional)
 ; ******************************************************************
 ; Known Issues:
 ; - If using dir be sure to specify a path (example: cmd /c dir c:\)
-; or specify a working directory
+; or specify a working directory   
 ; - Running 16 bit console applications may not produce output. Use
-; a 32 bit application to start the 16 bit process to receive output
+; a 32 bit application to start the 16 bit process to receive output 
 ; ******************************************************************
 ; Additional requirements:
-; - Your script must also contain a CMDret_Output function
-;
-; CMDret_Output(CMDout, CMDname="")
-; Usage:
-; CMDout - each line of output returned (1 line each time)
-; CMDname - type of output to process (Optional)
+; - none
 ; ******************************************************************
 ; Code Start
 ; ******************************************************************
 
-CMDret_Stream(CMDin, CMDname="", WorkingDir=0)
+CMDret_RunReturn(CMDin, WorkingDir=0)
 {
   Global cmdretPID
   tcWrk := WorkingDir=0 ? "Int" : "Str"
   idltm := A_TickCount + 20
-  LivePos = 1
+  CMsize = 1
   VarSetCapacity(CMDout, 1, 32)
   VarSetCapacity(sui,68, 0)
   VarSetCapacity(pi, 16, 0)
@@ -550,35 +485,27 @@ CMDret_Stream(CMDin, CMDname="", WorkingDir=0)
         cmdretPID += *(&pi+8+A_Index-1) << 8*A_Index-8
       Loop {
         idltm2 := A_TickCount - idltm
-        If (idltm2 < 15) {
-          DllCall("Sleep", Int, 15)
+        If (idltm2 < 10) {
+          DllCall("Sleep", Int, 10)
           Continue
         }
         IF (DllCall("PeekNamedPipe", "uint", hRead, "uint", 0, "uint", 0, "uint", 0, "uint*", bSize, "uint", 0 ) <> 0 ) {
           Process, Exist, %cmdretPID%
           IF (ErrorLevel OR bSize > 0) {
             IF (bSize > 0) {
-              VarSetCapacity(lpBuffer, bSize+1, 0)
+              VarSetCapacity(lpBuffer, bSize+1)
               IF (DllCall("ReadFile", "UInt",hRead, "Str", lpBuffer, "Int",bSize, "UInt*",bRead, "Int",0) > 0) {
                 IF (bRead > 0) {
-                  IF (StrLen(lpBuffer) < bRead) {
-                    VarSetCapacity(CMcpy, bRead, 32)
-                    bRead2 = %bRead%
-                    Loop {
-                      DllCall("RtlZeroMemory", "UInt", &CMcpy, Int, bRead)
-                      NULLptr := StrLen(lpBuffer)
-                      cpsize := bread - NULLptr
-                      DllCall("RtlMoveMemory", "UInt", &CMcpy, "UInt", (&lpBuffer + NULLptr + 2), "Int", (cpsize - 1))
-                      DllCall("RtlZeroMemory", "UInt", (&lpBuffer + NULLptr), Int, cpsize)
-                      DllCall("RtlMoveMemory", "UInt", (&lpBuffer + NULLptr), "UInt", &CMcpy, "Int", cpsize)
-                      bRead2 --
-                      IF (StrLen(lpBuffer) > bRead2)
-                        break
-                    }
-                  }
-              VarSetCapacity(lpBuffer, -1)
-                  CMDout .= lpBuffer
-                  bRead = 0
+                  TRead += bRead
+                  VarSetCapacity(CMcpy, (bRead+CMsize+1), 0)
+                  CMcpy = a
+                  DllCall("RtlMoveMemory", "UInt", &CMcpy, "UInt", &CMDout, "Int", CMsize)
+                  DllCall("RtlMoveMemory", "UInt", &CMcpy+CMsize, "UInt", &lpBuffer, "Int", bRead)
+                  CMsize += bRead
+                  VarSetCapacity(CMDout, (CMsize + 1), 0)
+                  CMDout=a   
+                  DllCall("RtlMoveMemory", "UInt", &CMDout, "UInt", &CMcpy, "Int", CMsize)
+                  VarSetCapacity(CMDout, -1)   ; fix required by change in autohotkey v1.0.44.14
                 }
               }
             }
@@ -589,40 +516,27 @@ CMDret_Stream(CMDin, CMDname="", WorkingDir=0)
         ELSE
           break
         idltm := A_TickCount
-        LiveFound := RegExMatch(CMDout, "m)^(.*)", LiveOut, LivePos)
-        If (LiveFound)
-          SetTimer, cmdretSTR, 5
       }
       cmdretPID=
       DllCall("CloseHandle", UInt, hWrite)
       DllCall("CloseHandle", UInt, hRead)
     }
   }
-  StringTrimLeft, LiveRes, CMDout, %LivePos%
-  If LiveRes <>
-    Loop, Parse, LiveRes, `n
-    {
-      FileLine = %A_LoopField%
-      StringTrimRight, FileLine, FileLine, 1
-      CMDret_Output(FileLine, CMDname)
+  IF (StrLen(CMDout) < TRead) {
+    VarSetCapacity(CMcpy, TRead, 32)
+    TRead2 = %TRead%
+    Loop {
+      DllCall("RtlZeroMemory", "UInt", &CMcpy, Int, TRead)
+      NULLptr := StrLen(CMDout)
+      cpsize := Tread - NULLptr
+      DllCall("RtlMoveMemory", "UInt", &CMcpy, "UInt", (&CMDout + NULLptr + 2), "Int", (cpsize - 1))
+      DllCall("RtlZeroMemory", "UInt", (&CMDout + NULLptr), Int, cpsize)
+      DllCall("RtlMoveMemory", "UInt", (&CMDout + NULLptr), "UInt", &CMcpy, "Int", cpsize)
+      TRead2 --
+      IF (StrLen(CMDout) > TRead2)
+        break
     }
+  }
   StringTrimLeft, CMDout, CMDout, 1
-  cmdretPID = 0
   Return, CMDout
-cmdretSTR:
-SetTimer, cmdretSTR, Off
-If (LivePosLast <> LiveFound) {
-  FileLine = %LiveOut1%
-  LivePos := LiveFound + StrLen(FileLine) + 1
-  LivePosLast := LivePos
-  CMDret_Output(FileLine, CMDname)
-}
-Return
-}
-
-CMDret_Output(CMDout, CMDname="")
-	{
-	global retStr
-	retStr .= CMDout
-	}
-Return
+} 
